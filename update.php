@@ -19,16 +19,16 @@ $zip->extractTo('.');
 $zip->close();
 unlink($file_name);
 
-$src_path = opendir(BX_SRC_DIR);
+$src = opendir(BX_SRC_DIR);
 
-while ($item = readdir($src_path)) {
+while ($item = readdir($src)) {
   if ($item === '.' || $item === '..') continue;
   $item_old = $src_path.'/'.$item;
   $item_new = $path.'/'.$item;
   rename($item_old, $item_new);
 }
 
-closedir($src_path);
+closedir($src);
 rmdir($src_path);
 
 echo 'Library successfully updated.'.PHP_EOL;
