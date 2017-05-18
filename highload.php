@@ -52,6 +52,31 @@ function bx_hl_select($block_id, $filter = null, $order = null, $limit = null) {
 }
 
 /**
+ * Получает значение свойства элемента, используя блок как фиксированный словарь значений.
+ * @param  string $block_id      ID блока-словаря.
+ * @param  string $instance_id   ID элемента словаря.
+ * @param  string $instance_prop Имя свойства, содержащего значение словаря.
+ * @return string                Значение из словаря.
+ */
+function bx_hl_enum($block_id, $instance_id, $instance_prop = null) {
+  static $enums = array();
+  $is_init = !isset($enums[$block_id]);
+
+  if ($is_init) {
+    $enum = bx_hl_select($block_id)->index('ID');
+    $enums[$block_id] = $enum;
+  }
+
+  $enum = $enums[$block_id];
+  $item = isset($enum[$instance_id]) ? $enum[$instance_id] : null;
+  $item = $instance_prop ? (isset($item[$instance_prop]) ? $item[$instance_prop] : null) : $item;
+
+  return $item;
+}
+
+
+
+/**
  * Обрабатывает результат скалярного запроса к блоку (обновление, удаление, вставка).
  * @param  \Bitrix\Main\Entity\Result $result Результат запроса.
  * @param  string                     $id     ID элемента.
