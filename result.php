@@ -4,7 +4,7 @@ namespace Bx
   /**
    * Абстрактное перечисление, использующее курсор в качестве источника данных.
    */
-  abstract class Result implements \Iterator
+  abstract class Result implements \Iterator, \Countable
   {
     /**
      * Возвращает очередной элемент перечисления.
@@ -323,6 +323,16 @@ namespace Bx
     {
       $isValid = !!$this->_current;
       return $isValid;
+    }
+
+    /**
+     * Получает количество элементов в перечислении.
+     * @return integer Количество элементов.
+     */
+    public function count()
+    {
+      $list = $this->toArray();
+      return count($list);
     }
 
     /**
