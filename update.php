@@ -16,7 +16,6 @@ $file_name = $file_name_zip;
 $file_raw = file_get_contents(BX_SRC_URL);
 file_put_contents($file_name, $file_raw);
 
-$success = false;
 $cmd = 'cd '.$path.' && tar -xvf '.basename($file_name);
 $cmd_int = null;
 $cmd_out = system($cmd, $cmd_int);
