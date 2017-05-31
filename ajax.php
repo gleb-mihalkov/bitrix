@@ -118,7 +118,14 @@ function _bx_ajax_serialize_json($value) {
  * @return string        Строка ответа сервера.
  */
 function _bx_ajax_serialize_text($value) {
-  return (string) $value;
+  if (is_scalar($value)) return (string) $value;
+
+  ob_start();
+  var_dump($value);
+  $result = ob_get_contents();
+  ob_end_clean();
+
+  return $result;
 }
 
 /**
@@ -127,7 +134,16 @@ function _bx_ajax_serialize_text($value) {
  * @return string        Строка ответа сервера.
  */
 function _bx_ajax_serialize_html($value) {
-  return (string) $value;
+  if (is_scalar($value)) return $value;
+
+  ob_start();
+  echo '<pre>';
+  var_dump($value);
+  echo '</pre>';
+  $result = ob_get_contents();
+  ob_end_clean();
+
+  return $result;
 }
 
 /**
