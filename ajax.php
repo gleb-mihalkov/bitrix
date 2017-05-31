@@ -7,12 +7,6 @@
  * Служебные результаты запроса.
  */
 
-// Функция не соответствует параметрам запроса.
-define('BX_NOT_RESOLVED', '_BX_AJAX_NOT_RESOLVED');
-
-// Тело ответа должно быть пустым.
-define('BX_EMPTY_BODY', '_BX_AJAX_EMPTY_BODY');
-
 // Ошибка HTTP 400 Bad Request (в запросе переданы некорректные данные).
 define('BX_BAD_REQUEST', '_BX_AJAX_BAD_REQUEST');
 
@@ -27,22 +21,28 @@ define('BX_IM_A_TEAPOT', '_BX_AJAX_IM_A_TEAPOT');
 // Ошибка HTTP 404 Not Found (ресурс не найден).
 define('BX_NOT_FOUND', '_BX_AJAX_NOT_FOUND');
 
-// Запрос не возвращает результатов, но прошел успешно.
+// Запрос не должен возвращать результатов, но прошел успешно.
 define('BX_SUCCESS', 'ok');
 
 /**
  * Вызывает указанную функцию как замыкание, если запрос содержит указанные параметры.
- * @param  array    $args Имя параметра.
- * @return mixed          Значение.
+ * @param  string    $param     Имя параметра. Метод будет вызван, если данный параметр
+ *                              присутствует в запросе.
+ * @param  string    $value     Значение параметра. Метод будет вызван, если значение параметра
+ *                              из запроса соответствует указанному.
+ * @param  callable  $callback  Функция, возвращающая данные для выдачи клиенту.
+ * @param  string    $mime      MIME-тип для установки заголовока ответа Content-Type.
+ * @param  callable  $serialize Функция, сериализующая значение в строку.
+ * @return mixed                Результат работы функции.
  */
-function _bx_ajax($param, $value, $callback) {
+function _bx_ajax($param, $value, $callback, $mime, $serialize) {
 
-  if ($value == null && $callback == null) {
+  if ($value === null && $callback === null) {
     $callback = $param;
     $param = null;
   }
 
-  if ($callback == null) {
+  if ($callback === null) {
     $callback = $value;
     $value = null;
   }
@@ -51,12 +51,12 @@ function _bx_ajax($param, $value, $callback) {
 
   if ($param) {
     $isExit = !isset($request[$param]);
-    if ($isExit) return BX_NOT_RESOLVED;
+    if ($isExit) return;
   }
 
   if ($value) {
     $isExit = $request[$param] !== $value;
-    if ($isExit) return BX_NOT_RESOLVED;
+    if ($isExit) return;
   }
 
   $is_exception = true;
@@ -73,70 +73,101 @@ function _bx_ajax($param, $value, $callback) {
     );
   }
 
+  header("Content-Type: $mime; charset=utf8");
+
   if ($result === BX_FORBIDDEN) {
     header('HTTP/1.1 403 Forbidden', true, 403);
-    return BX_EMPTY_BODY;
+    return;
   }
 
   if ($result === BX_NOT_FOUND) {
     header('HTTP/1.1 404 Not Found', true, 404);
-    return BX_EMPTY_BODY;
+    return;
   }
 
   if ($result === BX_BAD_REQUEST) {
     header('HTTP/1.1 400 Bad Request', true, 400);
-    return BX_EMPTY_BODY;
+    return;
   }
 
   if ($result === BX_IM_A_TEAPOT) {
     header('HTTP/1.1 418 I\'m a teapot', true, 418);
-    return BX_EMPTY_BODY;
+    return;
   }
 
   if ($is_exception) {
     header('HTTP/1.1 500 Internal Server Error', true, 500);
   }
 
-  return $result;
+  if ($result === null) return;
+  echo $serialize($result);
 }
 
 /**
- * Вызывает указанную функцию в качестве замыкания и возвращает
- * результат её работы как ответ сервера в формате JSON.
- * @param  string   $param    Опционально: имя параметра, который должен присутствовать быть в запросе,
- *                            чтобы переданная функция выполнилась. Если параметр задан не будет,
- *                            то функция выполнится в любом случае.
- * @param  string   $value    Опционально: требуемое значение параметра, указанного выше.
- * @param  callable $callback Замыкание, принимающее объект с параметрами запроса и возвращающее
- *                            ответ сервера.
- * @return void
+ * Сериализует значение в ответ сервера в формате JSON.
+ * @param  mixed  $value Значение.
+ * @return string        Строка ответа сервера.
  */
-function bx_ajax_json($param, $value = null, $callback = null) { 
-  $result = _bx_ajax($param, $value, $callback);
-  if ($result === BX_NOT_RESOLVED) return;
-
-  header('Content-Type: application/x-javascript; charset=utf8');
-  if ($result === BX_EMPTY_BODY) return;
-
-  echo json_encode($result);
+function _bx_ajax_serialize_json($value) {
+  return json_encode($value);
 }
 
 /**
- * Вызывает указанную функцию в качестве замыкания и возвращает результат её работы как ответ сервера в виде обычного текста.
- * @param  string   $param    Опционально: имя параметра, который должен присутствовать быть в запросе,
- *                            чтобы переданная функция выполнилась. Если параметр задан не будет,
- *                            то функция выполнится в любом случае.
- * @param  string   $value    Опционально: требуемое значение параметра, указанного выше.
- * @param  callable $callback Замыкание, принимающее объект с параметрами запроса и возвращающее
- *                            ответ сервера.
+ * Сериализует значение в обычный текст.
+ * @param  mixed  $value Значение.
+ * @return string        Строка ответа сервера.
+ */
+function _bx_ajax_serialize_text($value) {
+  return (string) $value;
+}
+
+/**
+ * Сериализует значение в HTML.
+ * @param  mixed  $value Значение.
+ * @return string        Строка ответа сервера.
+ */
+function _bx_ajax_serialize_html($value) {
+  return (string) $value;
+}
+
+/**
+ * Вызывает указанную функцию как замыкание, если запрос содержит указанные параметры.
+ * Ответ сервера в текстовом формате.
+ * @param  string    $param     Опционально: Имя параметра. Метод будет вызван, если данный параметр
+ *                              присутствует в запросе.
+ * @param  string    $value     Опционально: Значение параметра. Метод будет вызван, если значение параметра
+ *                              из запроса соответствует указанному.
+ * @param  callable  $callback  Функция, возвращающая данные для выдачи клиенту.
  * @return void
  */
 function bx_ajax($param, $value = null, $callback = null) {
-  $result = _bx_ajax($param, $value, $callback);
-  if ($result === BX_NOT_RESOLVED) return;
+  _bx_ajax($param, $value, $callback, 'text/plain', '_bx_ajax_serialize_text');
+}
 
-  header('Content-Type: text/plain; charset=utf8');
-  if ($result === BX_EMPTY_BODY) return;
+/**
+ * Вызывает указанную функцию как замыкание, если запрос содержит указанные параметры.
+ * Ответ сервера в формате JSON.
+ * @param  string    $param     Имя параметра. Метод будет вызван, если данный параметр
+ *                              присутствует в запросе.
+ * @param  string    $value     Значение параметра. Метод будет вызван, если значение параметра
+ *                              из запроса соответствует указанному.
+ * @param  callable  $callback  Функция, возвращающая данные для выдачи клиенту.
+ * @return void
+ */
+function bx_ajax_json($param, $value = null, $callback = null) { 
+  _bx_ajax($param, $value, $callback, 'application/x-javascript', '_bx_ajax_serialize_json');
+}
 
-  echo $result;
+/**
+ * Вызывает указанную функцию как замыкание, если запрос содержит указанные параметры.
+ * Ответ сервера в формате HTML.
+ * @param  string    $param     Опционально: Имя параметра. Метод будет вызван, если данный параметр
+ *                              присутствует в запросе.
+ * @param  string    $value     Опционально: Значение параметра. Метод будет вызван, если значение параметра
+ *                              из запроса соответствует указанному.
+ * @param  callable  $callback  Функция, возвращающая данные для выдачи клиенту.
+ * @return void
+ */
+function bx_ajax_html($param, $value = null, $callback = null) {
+  _bx_ajax($param, $value, $callback, 'text/html', '_bx_ajax_serialize_html');
 }
