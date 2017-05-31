@@ -6,13 +6,28 @@
 /**
  * Служебные результаты запроса.
  */
+
+// Функция не соответствует параметрам запроса.
 define('BX_NOT_RESOLVED', '_BX_AJAX_NOT_RESOLVED');
-define('BX_NO_BODY', '_BX_AJAX_NO_BODY');
+
+// Тело ответа должно быть пустым.
+define('BX_EMPTY_BODY', '_BX_AJAX_EMPTY_BODY');
+
+// Ошибка HTTP 400 Bad Request (в запросе переданы некорректные данные).
 define('BX_BAD_REQUEST', '_BX_AJAX_BAD_REQUEST');
+
+// Ошибка HTTP 403 Forbidden (доступ к операции запрещен для данного пользователя).
 define('BX_FORBIDDEN', '_BX_AJAX_FORBIDDEN');
+
+// Ошибка HTTP 418 I'm a teapot (Ошибка, возникающая если сервер - чайник.
+// Да, такой код действительно существует в спецификации.
+// Как я мог не вставить этот чудесный статус ответа)?
 define('BX_IM_A_TEAPOT', '_BX_AJAX_IM_A_TEAPOT');
+
+// Ошибка HTTP 404 Not Found (ресурс не найден).
 define('BX_NOT_FOUND', '_BX_AJAX_NOT_FOUND');
 
+// Запрос не возвращает результатов, но прошел успешно.
 define('BX_SUCCESS', 'ok');
 
 /**
@@ -60,22 +75,22 @@ function _bx_ajax($param, $value, $callback) {
 
   if ($result === BX_FORBIDDEN) {
     header('HTTP/1.1 403 Forbidden', true, 403);
-    return BX_NO_BODY;
+    return BX_EMPTY_BODY;
   }
 
   if ($result === BX_NOT_FOUND) {
     header('HTTP/1.1 404 Not Found', true, 404);
-    return BX_NO_BODY;
+    return BX_EMPTY_BODY;
   }
 
   if ($result === BX_BAD_REQUEST) {
     header('HTTP/1.1 400 Bad Request', true, 400);
-    return BX_NO_BODY;
+    return BX_EMPTY_BODY;
   }
 
   if ($result === BX_IM_A_TEAPOT) {
     header('HTTP/1.1 418 I\'m a teapot', true, 418);
-    return BX_NO_BODY;
+    return BX_EMPTY_BODY;
   }
 
   if ($is_exception) {
@@ -101,7 +116,7 @@ function bx_ajax_json($param, $value = null, $callback = null) {
   if ($result === BX_NOT_RESOLVED) return;
 
   header('Content-Type: application/x-javascript; charset=utf8');
-  if ($result === BX_NO_BODY) return;
+  if ($result === BX_EMPTY_BODY) return;
 
   echo json_encode($result);
 }
@@ -121,7 +136,7 @@ function bx_ajax($param, $value = null, $callback = null) {
   if ($result === BX_NOT_RESOLVED) return;
 
   header('Content-Type: text/plain; charset=utf8');
-  if ($result === BX_NO_BODY) return;
+  if ($result === BX_EMPTY_BODY) return;
 
   echo $result;
 }
