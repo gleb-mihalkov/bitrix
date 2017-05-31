@@ -171,7 +171,21 @@ function bx_ajax($param, $value = null, $callback = null) {
  * @return void
  */
 function bx_ajax_json($param, $value = null, $callback = null) { 
-  _bx_ajax($param, $value, $callback, 'application/x-javascript', '_bx_ajax_serialize_json');
+  _bx_ajax($param, $value, $callback, 'application/json', '_bx_ajax_serialize_json');
+}
+
+/**
+ * Вызывает указанную функцию как замыкание, если запрос содержит указанные параметры.
+ * Ответ сервера в формате JSONP.
+ * @param  string    $param     Имя параметра. Метод будет вызван, если данный параметр
+ *                              присутствует в запросе.
+ * @param  string    $value     Значение параметра. Метод будет вызван, если значение параметра
+ *                              из запроса соответствует указанному.
+ * @param  callable  $callback  Функция, возвращающая данные для выдачи клиенту.
+ * @return void
+ */
+function bx_ajax_jsonp($param, $value = null, $callback = null) {
+  _bx_ajax($param, $value, $callback, 'application/javascript', '_bx_ajax_serialize_json');
 }
 
 /**
