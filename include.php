@@ -11,3 +11,4 @@ require __DIR__.'/highload.php';
 require __DIR__.'/request.php';
 require __DIR__.'/ajax.php';
 require __DIR__.'/template.php';
+require __DIR__.'/user.php';

@@ -37,7 +37,8 @@ function bx_hl_get($block_id, $instance_id) {
  * @param  string             $block_id ID блока.
  * @param  array              $filter   Фильтр элементов.
  * @param  array              $order    Порядок сортировки элементов.
- * @param  array|integer      $limit    Максимальное количество элементов и (опционально) начальная позиция перечисления.
+ * @param  array|integer      $limit    Максимальное количество элементов и (опционально)
+ *                                      начальная позиция перечисления.
  * @return \Bx\ResultHighload           Перечисление элементов блока.
  */
 function bx_hl_select($block_id, $filter = null, $order = null, $limit = null) {
