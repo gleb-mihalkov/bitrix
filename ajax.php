@@ -59,14 +59,23 @@ function _bx_ajax($param, $value, $callback, $mime, $serialize) {
     if ($isExit) return;
   }
 
-  $is_exception = true;
   $result = null;
 
   try {
     $result = $callback($request);
-    $is_exception = false;
   }
+
+  catch (Bx\AjaxError $e) {
+    header('HTTP/1.1 400 Bad Request', true, 400);
+
+    $result = $e->isMessage
+      ? $e->getMessage()
+      : $e->getErrors();
+  }
+  
   catch (Exception $e) {
+    header('HTTP/1.1 500 Internal Server Error', true, 500);
+
     $result = array(
       'message' => $e->getMessage(),
       'code' => $e->getCode()
@@ -74,30 +83,6 @@ function _bx_ajax($param, $value, $callback, $mime, $serialize) {
   }
 
   header("Content-Type: $mime; charset=utf8");
-
-  if ($result === BX_FORBIDDEN) {
-    header('HTTP/1.1 403 Forbidden', true, 403);
-    return;
-  }
-
-  if ($result === BX_NOT_FOUND) {
-    header('HTTP/1.1 404 Not Found', true, 404);
-    return;
-  }
-
-  if ($result === BX_BAD_REQUEST) {
-    header('HTTP/1.1 400 Bad Request', true, 400);
-    return;
-  }
-
-  if ($result === BX_IM_A_TEAPOT) {
-    header('HTTP/1.1 418 I\'m a teapot', true, 418);
-    return;
-  }
-
-  if ($is_exception) {
-    header('HTTP/1.1 500 Internal Server Error', true, 500);
-  }
 
   if ($result === null) return;
   echo $serialize($result);
