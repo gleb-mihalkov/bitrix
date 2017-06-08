@@ -18,6 +18,8 @@ function remove_item($item) {
     $file = $item.'/'.$file;
     remove_item($file);
   }
+
+  rmdir($item);
 }
 
 function rename_item($item, $item_new) {
