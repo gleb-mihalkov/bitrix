@@ -56,10 +56,24 @@ namespace
 {
   /**
    * Возвращает экземпляр ошибки запроса.
-   * @param  string|array  $errors Сообщение об ошибке или коллекция ошибок.
+   * @param  string|array  $name  Имя поля с ошибкой,
+   *                              или коллекция полей с сообщениями об их ошибках,
+   *                              или текст сообщения об ошибке без привязке к имени
+   *                              поля.
+   * @param  string        $value Сообщение об ошибке (если задается имя поля).
    * @return \Bx\AjaxError         Экземпляр ошибки.
    */
-  function bx_ajax_error($errors = null) {
-    return new Bx\AjaxError($errors);
+  function bx_ajax_error($name, $value = null) {
+    if (is_array($name)) return new \Bx\AjaxError($name);
+
+    $argsCount = func_num_args();
+
+    if ($argsCount < 2) {
+      return new \Bx\AjaxError($name);
+    }
+
+    $errors = array();
+    $errors[$name] = $value;
+    return new \Bx\AjaxError($errors);
   }
 }
