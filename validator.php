@@ -14,7 +14,7 @@ namespace Bx
 
     /**
      * Создает экземпляр класса.
-     * @param array $array Данные для валидации.
+     * @param array|Request $array Данные для валидации.
      */
     public function __construct($array)
     {

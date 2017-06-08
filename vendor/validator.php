@@ -24,7 +24,7 @@ class Validator {
      *
      * @param array $data
      */
-    function __construct(array $data = null) {
+    function __construct($data = null) {
         if (!empty($data)) $this->setData($data);
     }
     /**
