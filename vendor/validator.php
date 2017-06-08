@@ -34,7 +34,7 @@ class Validator {
      * @param mixed $data
      * @return FormValidator
      */
-    public function setData(array $data) {
+    public function setData($data) {
         $this->data = $data;
         return $this;
     }
