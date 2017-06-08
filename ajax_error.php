@@ -63,7 +63,7 @@ namespace
    * @param  string        $value Сообщение об ошибке (если задается имя поля).
    * @return \Bx\AjaxError         Экземпляр ошибки.
    */
-  function bx_ajax_error($name, $value = null) {
+  function bx_ajax_error($name = '', $value = null) {
     if (is_array($name)) return new \Bx\AjaxError($name);
 
     $argsCount = func_num_args();
