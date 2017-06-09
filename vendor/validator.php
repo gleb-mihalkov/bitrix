@@ -150,15 +150,15 @@ class Validator {
      * @param string $message
      * @return FormValidator
      */
-    public function min($limit, $include = TRUE, $message = null) {
+    public function min($limit, $include = true, $message = null) {
         $this->setRule(__FUNCTION__, function($val, $args) {
             if (strlen($val) === 0) {
-                return TRUE;
+                return true;
             }
             $val = (float) $val;
             $limit = (float) $args[0];
             $inc = (bool) $args[1];
-            return ($val > $limit || ($inc === TRUE && $val === $limit));
+            return ($val > $limit || ($inc === true && $val === $limit));
         }, $message, array($limit, $include));
         return $this;
     }
@@ -170,15 +170,15 @@ class Validator {
      * @param string $message
      * @return FormValidator
      */
-    public function max($limit, $include = TRUE, $message = null) {
+    public function max($limit, $include = true, $message = null) {
         $this->setRule(__FUNCTION__, function($val, $args) {
             if (strlen($val) === 0) {
-                return TRUE;
+                return true;
             }
             $val = (float) $val;
             $limit = (float) $args[0];
             $inc = (bool) $args[1];
-            return ($val < $limit || ($inc === TRUE && $val === $limit));
+            return ($val < $limit || ($inc === true && $val === $limit));
         }, $message, array($limit, $include));
         return $this;
     }
@@ -191,7 +191,7 @@ class Validator {
      * @param string $message
      * @return FormValidator
      */
-    public function between($min, $max, $include = TRUE, $message = null) {
+    public function between($min, $max, $include = true, $message = null) {
         $message = $message ? $message : $this->_getDefaultMessage(__FUNCTION__, array($min, $max, $include));
         $this->min($min, $include, $message)->max($max, $include, $message);
         return $this;
@@ -372,7 +372,7 @@ class Validator {
     public function date($message = null) {
         $this->setRule(__FUNCTION__, function($val, $args) {
             if (strlen(trim($val)) === 0) {
-                return TRUE;
+                return true;
             }
             try {
                 $dt = new DateTime($val, new DateTimeZone("UTC"));
@@ -405,7 +405,7 @@ class Validator {
         $this->setRule(__FUNCTION__, function($val, $args) {
             $format = $args[1];
             $limitDate = $args[0];
-            return ($limitDate > DateTime::createFromFormat($format, $val)) ? FALSE : TRUE;
+            return ($limitDate > DateTime::createFromFormat($format, $val)) ? FALSE : true;
         }, $message, array($date, $format));
         return $this;
     }
@@ -592,7 +592,7 @@ class Validator {
                     return FALSE;
                 }
             }
-            return TRUE;
+            return true;
         } else {
             // try each rule function
             foreach ($this->rules as $rule => $is_true) {
@@ -609,7 +609,7 @@ class Validator {
                 }
             }
       $this->validData[$key] = $val;
-            return TRUE;
+            return true;
         }
     }
     /**
@@ -710,7 +710,7 @@ class Validator {
      */
     public function setRule($rule, $function, $message = '', $args = array()) {
         if (!array_key_exists($rule, $this->rules)) {
-            $this->rules[$rule] = TRUE;
+            $this->rules[$rule] = true;
             if (!array_key_exists($rule, $this->functions)) {
                 if (!is_callable($function)) {
                     die('Invalid function for rule: ' . $rule);
@@ -753,14 +753,14 @@ class Validator {
                 break;
             case 'min':
                 $message = '%s must be greater than ';
-                if ($args[1] == TRUE) {
+                if ($args[1] == true) {
                     $message .= 'or equal to ';
                 }
                 $message .= $args[0] . '.';
                 break;
             case 'max':
                 $message = '%s must be less than ';
-                if ($args[1] == TRUE) {
+                if ($args[1] == true) {
                     $message .= 'or equal to ';
                 }
                 $message .= $args[0] . '.';

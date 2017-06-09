@@ -151,6 +151,36 @@ namespace Bx
         ? self::$messages[$name]
         : '';
     }
+
+
+
+    /**
+     * Коллекция пользовательских правил валидации.
+     * @var array
+     */
+    protected static $rules = array();
+
+    /**
+     * Задает новое правило валидации.
+     * @param string   $name     Имя правила.
+     * @param callable $callback Обработчик правила.
+     */
+    public static function setRule($name, $callback)
+    {
+      self::$rules[$name] = $callback;
+    }
+
+    /**
+     * Получает обработчик для правила валидации.
+     * @param  string   $name Имя правила.
+     * @return callable       Обработчик.
+     */
+    public static function getRule($name)
+    {
+      return isset(self::$rules[$name])
+        ? self::$rules[$name]
+        : null;
+    }
   }
 }
 
