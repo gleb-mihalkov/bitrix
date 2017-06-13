@@ -7,6 +7,7 @@ require __DIR__.'/vendor/include.php';
 
 require __DIR__.'/debug.php';
 require __DIR__.'/filter.php';
+require __DIR__.'/path.php';
 require __DIR__.'/result.php';
 require __DIR__.'/result_highload.php';
 require __DIR__.'/highload.php';
