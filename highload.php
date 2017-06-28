@@ -92,16 +92,8 @@ function bx_hl_result($result, $id = null) {
   }
 
   $errors = $result->getErrors();
-
-  foreach ($errors as $error) {
-    $message = $error->getMessage();
-    $code = $error->getCode();
-
-    throw new Exception($message, $code);
-  }
-
-  $message = 'Unknown HighloadBlock error.';
-  throw new Exception($message, 0);
+  $errors = implode(', ', $errors);
+  throw new Exception($errors);
 }
 
 /**
