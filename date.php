@@ -18,24 +18,24 @@ define('BX_DATETIME_DB', 'Y-m-d H:i:s');
  * @return Bitrix\DateTime|string                          Модель или строка даты.
  */
 function bx_date($source, $format = null) {
-	if (empty($source) || $source === true) {
-		$source = time();
-	}
+  if (empty($source) || $source === true) {
+    $source = time();
+  }
 
-	if (is_integer($source)) {
-		$date = \Bitrix\Main\Type\DateTime::createFromTimestamp($source);
-	}
+  if (is_integer($source)) {
+    $source = \Bitrix\Main\Type\DateTime::createFromTimestamp($source);
+  }
 
-	if (is_object($source)) {
-		$is_native = $source instanceof DateTime;
-		$date = $is_native ? \Bitrix\Main\Type\DateTime::createFromPhp($source) : $source;
-	}
-	else {
-		$source = bx_date_preprocess($source);
-		$date = new \Bitrix\Main\Type\DateTime($source);
-	}
+  if (is_object($source)) {
+    $is_native = $source instanceof DateTime;
+    $date = $is_native ? \Bitrix\Main\Type\DateTime::createFromPhp($source) : $source;
+  }
+  else {
+    $source = bx_date_preprocess($source);
+    $date = new \Bitrix\Main\Type\DateTime($source);
+  }
 
-	return $format === null ? $date : $date->format($format);
+  return $format === null ? $date : $date->format($format);
 }
 
 /**
@@ -44,5 +44,5 @@ function bx_date($source, $format = null) {
  * @return string       Отформатированная строка.
  */
 function bx_date_preprocess($date) {
-	return $date;
+  return $date;
 }
