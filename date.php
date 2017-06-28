@@ -12,6 +12,10 @@
  * @return Bitrix\DateTime|string                          Модель или строка даты.
  */
 function bx_date($source, $format = null) {
+	if (empty($source) || $source === true) {
+		$source = time();
+	}
+
 	if (is_integer($source)) {
 		$date = \Bitrix\Main\Type\DateTime::createFromTimestamp($source);
 	}
