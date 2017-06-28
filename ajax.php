@@ -83,8 +83,6 @@ function _bx_ajax($param, $value, $callback, $mime, $serialize) {
   }
 
   header("Content-Type: $mime; charset=utf8");
-
-  if ($result === null) return;
   echo $serialize($result);
 }
 
@@ -103,13 +101,9 @@ function _bx_ajax_serialize_json($value) {
  * @return string        Строка ответа сервера.
  */
 function _bx_ajax_serialize_text($value) {
-  if (is_scalar($value)) return (string) $value;
+  if (empty($value) || is_scalar($value)) return (string) $value;
 
-  ob_start();
-  var_dump($value);
-  $result = ob_get_contents();
-  ob_end_clean();
-
+  $result = bx_dump_raw($value);
   return $result;
 }
 
@@ -119,15 +113,9 @@ function _bx_ajax_serialize_text($value) {
  * @return string        Строка ответа сервера.
  */
 function _bx_ajax_serialize_html($value) {
-  if (is_scalar($value)) return $value;
+  if (empty($value) || is_scalar($value)) return $value;
 
-  ob_start();
-  echo '<pre>';
-  var_dump($value);
-  echo '</pre>';
-  $result = ob_get_contents();
-  ob_end_clean();
-
+  $result = '<pre>'.bx_dump_raw($value).'</pre>';
   return $result;
 }
 
