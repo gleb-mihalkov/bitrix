@@ -5,7 +5,7 @@ namespace Bx
    * Исключение, возникающее для генерации ошибки HTTP 400
    * Bad Request.
    */
-  class AjaxError extends \Exception
+  class AjaxError extends Error
   {
     /**
      * Коллекция именованных ошибок.

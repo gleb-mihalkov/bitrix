@@ -5,6 +5,7 @@
 
 require __DIR__.'/vendor/include.php';
 
+require __DIR__.'/error.php';
 require __DIR__.'/debug.php';
 require __DIR__.'/date.php';
 require __DIR__.'/filter.php';
