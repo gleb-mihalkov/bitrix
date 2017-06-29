@@ -51,12 +51,18 @@ function _bx_ajax($param, $value, $callback, $mime, $serialize) {
     $result = $callback($request);
   }
 
-  catch (Bx\Error $e) {
+  catch (Bx\AjaxError $e) {
     header('HTTP/1.1 400 Bad Request', true, 400);
 
     $result = $e->isMessage
       ? $e->getMessage()
       : $e->getErrors();
+  }
+
+  catch (Bx\Error $e) {
+    header('HTTP/1.1 400 Bad Request', true, 400);
+    
+    $result = $e->getMessage();
   }
   
   catch (Exception $e) {
