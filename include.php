@@ -21,3 +21,4 @@ require __DIR__.'/user.php';
 require __DIR__.'/validator.php';
 require __DIR__.'/validator_field.php';
 require __DIR__.'/validator_messages.php';
+require __DIR__.'/validator_rules.php';

@@ -68,4 +68,5 @@ namespace Bx
     return "Дата не должна быть больше $date.";
   });
 
+  Validator::setMessage('pattern', 'Значение не соответствует формату.');
 }
