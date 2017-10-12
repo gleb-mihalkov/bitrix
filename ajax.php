@@ -46,6 +46,7 @@ function _bx_ajax($param, $value, $callback, $mime, $serialize) {
   }
 
   $result = null;
+  $error = null;
 
   try {
     $result = $callback($request);
@@ -54,7 +55,7 @@ function _bx_ajax($param, $value, $callback, $mime, $serialize) {
   catch (Bx\AjaxError $e) {
     header('HTTP/1.1 400 Bad Request', true, 400);
 
-    $result = $e->isMessage
+    $error = $result = $e->isMessage
       ? $e->getMessage()
       : $e->getErrors();
   }
@@ -62,16 +63,22 @@ function _bx_ajax($param, $value, $callback, $mime, $serialize) {
   catch (Bx\Error $e) {
     header('HTTP/1.1 400 Bad Request', true, 400);
     
-    $result = $e->getMessage();
+    $error = $result = $e->getMessage();
   }
   
   catch (Exception $e) {
     header('HTTP/1.1 500 Internal Server Error', true, 500);
 
-    $result = array(
+    $error = $result = array(
       'message' => $e->getMessage(),
       'code' => $e->getCode()
     );
+  }
+
+  if ($error != null) {
+    $error = json_encode($error);
+    $error = urlencode($error);
+    header('X-Error: '.$error);
   }
 
   header("Content-Type: $mime; charset=utf8");
