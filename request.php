@@ -44,6 +44,10 @@ namespace Bx
         $value = $isValue
           ? self::sanitizeValue($value)
           : self::sanitizeFile($value);
+
+        $value = $isValue
+          ? self::formatValue($value)
+          : $value;
       }
 
       $this->values[$name] = $value;
