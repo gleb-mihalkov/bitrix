@@ -141,6 +141,47 @@ namespace Bx
     }
 
     /**
+     * Форматирует значение.
+     * @param  mixed $value Значение свойства.
+     * @return mixed        Значение.
+     */
+    protected static function formatValue($value)
+    {
+      if (is_scalar($value)) return $value;
+
+      $isList = !empty($value) && array_keys($value) === range(0, count($value) - 1);
+
+      if ($isList) {
+        $isObject = true;
+        $object = [];
+
+        foreach ($value as $item) {
+          $isValue = !is_array($item) || isset($item[0]) || count($item) !== 1;
+
+          if ($isValue) {
+            $isObject = false;
+            break;
+          }
+          
+          foreach ($item as $fieldName => $fieldValue) {
+            $object[$fieldName] = $fieldValue;
+            break;
+          }
+        }
+
+        if ($isObject) {
+          $value = $object;
+        }
+      }
+
+      foreach ($value as $name => $item) {
+        $value[$name] = self::formatValue($item);
+      }
+
+      return $value;
+    }
+
+    /**
      * Возвращает ключ массива, содержащего параметр, в массиве $GLOBALS.
      * @param  string $name Имя параметра.
      * @return string       Имя ключа в массиве $GLOBALS.
