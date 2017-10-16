@@ -147,6 +147,15 @@ namespace Bx
       $this->validator->validate($this->property);
     }
 
+    /**
+     * Задает описание ошибки для данного поля.
+     * @param string $message Сообщение об ошибке.
+     */
+    public function setError($message)
+    {
+      return $this->_error($message);
+    }
+
 
 
     /**

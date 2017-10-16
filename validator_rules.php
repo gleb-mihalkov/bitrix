@@ -5,4 +5,8 @@ namespace Bx
         $result = preg_match($pattern, $value);
         return !!$result;
     });
+
+    Validator::setRule('_error', function($value) {
+        return false;
+    });
 }
