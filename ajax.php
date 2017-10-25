@@ -81,8 +81,13 @@ function _bx_ajax($param, $value, $callback, $mime, $serialize) {
     header('X-Error: '.$error);
   }
 
-  header("Content-Type: $mime; charset=utf8");
-  echo $serialize($result);
+  if ($mime) {
+    header("Content-Type: $mime; charset=utf8");
+    echo $serialize($result);
+  }
+  else {
+    $serialize($result);
+  }
 }
 
 /**
@@ -116,6 +121,32 @@ function _bx_ajax_serialize_html($value) {
 
   $result = '<pre>'.bx_dump_raw($value).'</pre>';
   return $result;
+}
+
+/**
+ * Сериализует информацию о файле в HTML.
+ * @param  array $value Сведения о файле вида [
+ *                      'tmp_name' => 'путь к файлу',
+ *                      'name' => 'имя файла для скачивания'
+ *                      ].
+ * @return resource     Содержимое файла.
+ */
+function _bx_ajax_serialize_file($value) {
+  $file = $value['tmp_name'];
+  $name = urlencode($value['name']);
+
+  $size = filesize($file);
+  $mime = mime_content_type($file);
+
+  header('Content-Type: '.$mime);
+  header('Content-Disposition: inline; filename='.$name);
+  header('Content-Transfer-Encoding: binary');
+  header('Expires: 0');
+  header('Cache-Control: must-revalidate');
+  header('Pragma: public');
+  header('Content-Length: '.$size);
+
+  readfile($file);
 }
 
 /**
@@ -172,4 +203,20 @@ function bx_ajax_jsonp($param, $value = null, $callback = null) {
  */
 function bx_ajax_html($param, $value = null, $callback = null) {
   _bx_ajax($param, $value, $callback, 'text/html', '_bx_ajax_serialize_html');
+}
+
+/**
+ * Вызывает указанную функцию как замыкание, если запрос содержит указанные параметры.
+ * Ответ сервера в формате HTML.
+ * @param  string    $param     Опционально: Имя параметра. Метод будет вызван, если данный параметр
+ *                              присутствует в запросе.
+ * @param  string    $value     Опционально: Значение параметра. Метод будет вызван, если значение параметра
+ *                              из запроса соответствует указанному.
+ * @param  callable  $callback  Функция, возвращающая данные для выдачи клиенту. Файл описывается
+ *                              посредством массива вида [
+ *                              'tmp_name' => 'путь к файлу', 'name' => 'имя файла для скачивания'].
+ * @return void
+ */
+function bx_ajax_file($param, $value = null, $callback = null) {
+  _bx_ajax($param, $value, $callback, null, '_bx_ajax_serialize_file');
 }
